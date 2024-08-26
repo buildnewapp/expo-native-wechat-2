@@ -127,6 +127,46 @@ class ExpoNativeWechatModule : Module(), IWXAPIEventHandler {
       )
     }
 
+    Function("shareImage") { params: ShareImageParams ->
+      val src = params.src
+      val scene = params.scene
+
+      ExpoNativeWechatUtils.downloadFileAsBitmap(src, object : DownloadBitmapCallback {
+          override fun onFailure(call: Call, e: IOException) {
+            this@ExpoNativeWechatModule.sendEvent(
+              "ResponseData", bundleOf(
+                "id" to params.id,
+                "success" to false,
+                "message" to e.localizedMessage
+              )
+            )
+          }
+
+          override fun onResponse(bitmap: Bitmap) {
+            val imgObj = WXImageObject(bitmap)
+            val msg = WXMediaMessage()
+            msg.mediaObject = imgObj
+
+            bitmap?.let {
+              msg.thumbData = ExpoNativeWechatUtils.bmpToByteArray(bitmap, 32, true)
+            }
+
+            val req = SendMessageToWX.Req()
+            req.message = msg
+            req.scene = scene
+
+            sendEvent(
+              "ResponseData", bundleOf(
+                "id" to params.id,
+                "success" to wxApi?.sendReq(req)
+              )
+            )
+
+          }
+      })
+
+    }
+
     Function("shareWebpage") { params: ShareWebpageParams ->
       val webpageUrl = params.webpageUrl
       val title = params.title

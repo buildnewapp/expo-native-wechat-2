@@ -17,6 +17,11 @@
   </a>
 </p>
 
+## 和expo-native-wechat的区别
+#### 修复了expo-native-wechat安卓下shareImage没有实现的bug
+#### 修复了expo-native-wechat ios 下shareImage图片大无法分享bug
+#### 版本时间2024-08-26 15:43:49
+
 #### For Bare React Native Project
 
 Please refer to [Native Wechat](https://github.com/Hector-Chong/native-wechat)
